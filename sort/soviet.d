@@ -2,6 +2,7 @@ module sort.soviet;
 
 T[] purge(T)(T[] array,size_t[] purgelist)if(__traits(isArithmetic,T)){
     import std.algorithm,std.range,std.array;
+    assert(purgelist.filter!(x=>array.length>x).equal(purgelist));
     return iota(array.length).filter!((x){
             foreach(l;purgelist){
             if(x==l)return false;
@@ -22,12 +23,4 @@ T[] stalin(T)(T[] array)if(__traits(isArithmetic,T)){
         }
     }
     return array.purge(list);
-}
-
-void main(){
-    import std;
-    int[] array=[0,1,2,3,2,1,5];
-    array.stalin.writeln;
-    array=[];
-    array.stalin.writeln;
 }
