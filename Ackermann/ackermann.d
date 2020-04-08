@@ -4,9 +4,11 @@ import std;
 ulong[ulong][ulong] dp;
 size_t called;
 
-void main(){
-    auto ans=Ack(3,3);
-    writefln("Ack(3,3) = %s : func called %s times.",ans,called);
+void main(string[] args){
+    auto m=args[1].to!ulong;
+    auto n=args[2].to!ulong;
+    auto ans=Ack(m,n);
+    writefln("Ack(%s,%s) = %s : func called %s times.",m,n,ans,called);
 }
 
 auto Ack(ulong m, ulong n){
