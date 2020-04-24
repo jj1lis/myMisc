@@ -1,0 +1,15 @@
+.dub
+docs.json
+__dummy.html
+docs/
+/shiritori
+shiritori.so
+shiritori.dylib
+shiritori.dll
+shiritori.a
+shiritori.lib
+shiritori-test-*
+*.exe
+*.o
+*.obj
+*.lst
