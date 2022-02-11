@@ -1,0 +1,91 @@
+\documentclass[uplatex,a4paper,dvipdfmx]{jsarticle}
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bm}
+\usepackage{physics}
+\usepackage[top=15truemm,bottom=20truemm,left=15truemm,right=15truemm]{geometry}
+\usepackage{tikz}
+\usepackage{gnuplot-lua-tikz}
+\usetikzlibrary{intersections,calc,arrows.meta}
+\usepackage{here}
+\usepackage{siunitx}
+\usepackage{multicol}
+\usepackage{systeme}
+\usepackage[version=3]{mhchem}
+\usepackage{chemfig}
+\usepackage{url}
+\usepackage{braket}
+\renewcommand{\thefootnote}{[\arabic{footnote}]}
+\renewcommand{\labelenumi}{(\arabic{enumi})}
+\newcommand{\Sinarc}{\mathrm{Sin}^{-1}}
+\newcommand{\Cosarc}{\mathrm{Cos}^{-1}}
+\newcommand{\Tanarc}{\mathrm{Tan}^{-1}}
+
+\DeclareMathOperator*{\map}{map}
+\DeclareMathOperator*{\fix}{fix}
+\newcommand{\append}{\hspace{1pt} \tilde{+} \hspace{1pt}}
+
+\title{}
+\author{}
+
+\begin{document}
+    ある集合$G$に対して、その要素を用いて作成した要素$n$個の重複順列$P$すべての集合$S_P$を返すサブルーチン$f_G:n \mapsto S_P$を考える。
+
+    $f$の再帰的定義は
+
+    \begin{equation*}
+        f_G := \lambda n. \left\{
+            \begin{array}{lc}
+                \displaystyle \left( \map_{f(G,n-1) \to p} p \append G_1,\, \map_{f(G,n-1) \to p} p \append G_2,\, \ldots \,,\,\map_{f(G,n-1) \to p} p \append G_{\left| G \right|} \right) & n > 1 \\
+                \left(G_1, G_2, \ldots, G_{\left| G \right|}\right) & n = 1
+            \end{array}
+            \right.
+    \end{equation*}
+    である。ただし$G_k$は$G$の要素に重複なく振り分けた番号である。以下の通り演算を定義した。
+
+    \begin{table}[H]
+        \centering
+        \begin{tabular}{c|l} \hline
+            演算 & 定義 \\ \hline
+            $\displaystyle \map_{X \to x} \langle \text{expr} \rangle$ & $X$の各要素$x$に対して操作$\langle \text{expr} \rangle$を行う。$X$が順列の場合は元の順序を破壊しない。 \\ \hline
+            $P \append x$ & 順列$P$の末尾に要素$x$を結合する。 \\ \hline
+        \end{tabular}
+    \end{table}
+
+    また、不動点コンビネータを$\fix$とする。
+
+    ところで一般に、ある再帰関数$f(x)$を$f(x) = U(f,x)$という形で表す関数$U$が存在する。さらに$U$を$V: f \mapsto U(f,x)$で定義するとき、
+    \begin{equation}
+        f(x) = \fix(V) \tag{Lem.}
+    \end{equation}
+    が成り立つ。
+
+    今回の例に当てはめると、
+
+    \begin{align*}
+        U &= \lambda f_G. \lambda n. \left\{
+            \begin{array}{lc}
+                \displaystyle \left( \map_{f(G,n-1) \to p} p \append G_1,\, \map_{f(G,n-1) \to p} p \append G_2,\, \ldots \,,\,\map_{f(G,n-1) \to p} p \append G_{\left| G \right|} \right) & n > 1 \\
+                \left(G_1, G_2, \ldots, G_{\left| G \right|}\right) & n = 1
+            \end{array}
+            \right. \\
+        V &= \lambda f_G. \left\{
+            \begin{array}{lc}
+                \lambda n.\displaystyle \left( \map_{f(G,n-1) \to p} p \append G_1,\, \map_{f(G,n-1) \to p} p \append G_2,\, \ldots \,,\,\map_{f(G,n-1) \to p} p \append G_{\left| G \right|} \right) & n > 1 \\
+                \lambda n. \left(G_1, G_2, \ldots, G_{\left| G \right|}\right) & n = 1
+            \end{array}
+            \right. \\
+            &= \lambda f_Gn. \left\{
+            \begin{array}{lc}
+                \displaystyle \left( \map_{f(G,n-1) \to p} p \append G_1,\, \map_{f(G,n-1) \to p} p \append G_2,\, \ldots \,,\,\map_{f(G,n-1) \to p} p \append G_{\left| G \right|} \right) & n > 1 \\
+                \left(G_1, G_2, \ldots, G_{\left| G \right|}\right) & n = 1
+            \end{array}
+            \right.
+    \end{align*}
+
+    Order:
+    \begin{align*}
+        n \sum_{k=0}^{n} |G|\cdot|G|^k &= n \sum_{k=1}^{n+1} |G|^k \\
+            &= n \frac{|G|(|G|^{n+1} - 1)}{|G|-1} \\
+            &= \frac{n(|G|^{n+2}) - n|G|}{|G|-1} \\
+        \therefore\hspace{5pt} &O(n|G|^{n+1})
+    \end{align*}
+\end{document}
