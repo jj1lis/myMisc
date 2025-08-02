@@ -1,0 +1,166 @@
+\documentclass[uplatex,a4paper,dvipdfmx]{jsarticle}
+\input{mysettings.tex}
+\title{モナドって何だよ}
+\author{型推栄 (\texttt{@\_jj1lis\_uec})}
+
+\begin{document}
+\maketitle
+
+\section{はじめに}
+
+プログラミング言語におけるモナドって何？ という直感が全然生えてこないので，まとめてみて理解を試みる．
+よかったら読んでみてください．あと間違いがあればご指摘お願いします．
+
+本稿では以下の知識を仮定する．
+\begin{itemize}
+    \item 圏論の入門書（Mac LaneとかLeinsterとか）の最初の数章を読んだことがある．
+    \item Haskell について多少は知っている（でもモナドは知らない）．
+    \item 型について多少は知っている．
+\end{itemize}
+    
+\section{圏論におけるモナド}
+\setcounter{general}{1}
+
+文献によって定義の揺れなどがあるだろうから，本稿で採用するモナドの定義を述べておく．
+
+\begin{dfn}
+    \label{dfn:monoidal_category}
+    \begin{enumerate}
+        \item $\Vcal$を圏，$I \in \Vcal$をその対象，$\otimes \colon \Vcal \times \Vcal \to \Vcal$を関手とする．
+            $\otimes(A, B) \in \Vcal$は$A \otimes B$のようにも書く．
+            次のような自然同型$\alpha, \lambda, \rho$が存在するとき，$\Vcal$は\textbf{モノイダル} (\textit{monoidal}) であると言う．
+            なお以下では対象$I \in \Vcal$と関手$I \colon \mathbf{1} \to \Vcal$と同一視していることに注意せよ．
+            \begin{equation*}
+                \begin{array}{rccc}
+                    \alpha \colon & \otimes \circ (\id_\Vcal \times \otimes) & \Rightarrow & \otimes \circ (\otimes \times \id_\Vcal), \\
+                    \lambda \colon & \pi_2 & \Rightarrow & I \times \id_\Vcal, \\
+                    \rho \colon & \pi_1 & \Rightarrow & \id_\Vcal \times I,
+                \end{array}
+            \end{equation*}
+            \begin{equation} \label{equation:diagram_monoidal_isomorphisms}
+                \begin{tikzcd}[sep=large]
+                    \Vcal \times \Vcal \times \Vcal  \arrow[r, "\otimes \times \id_\Vcal"] \arrow[d, "\id_\Vcal \times \otimes"'] & \Vcal \times \Vcal \arrow[d, "\otimes"] \\
+                    \Vcal \arrow[ur, Rightarrow, shorten=7mm, "\alpha" sloped]\times \Vcal \arrow[r, "\otimes"'] & \Vcal\rlap{,}
+                \end{tikzcd}
+                \qquad
+                \begin{tikzcd}[sep=large]
+                    \onebf \times \Vcal \arrow[r, "I \times \id_\Vcal"] \arrow[rd, bend right, "\pi_2"' name=X]
+                        & \Vcal \times \Vcal \arrow[d, "\otimes"] \arrow[Rightarrow, from=X, shorten=5mm, "\lambda" sloped]
+                        & \arrow[l, "\id_\Vcal \times I"'] \Vcal \times \onebf \arrow[ld, bend left, "\pi_1" name=Y]  \arrow[Rightarrow, from=Y, to=1-2, shorten=5mm, "\rho" sloped] \\
+                        & \Vcal\rlap{.}
+                \end{tikzcd}
+            \end{equation}
+            加えて，任意の$A, B, C, D \in \Vcal$に対して以下の図式は可換となる必要がある．
+            ただしここで射$\alpha_{(A, B, C)}$を簡単に$\alpha_{A, B, C}$とも書いている：
+            \begin{equation*}
+                \begin{tikzcd}[row sep=large]
+                    A \otimes (I \otimes B) \arrow[rr, "\alpha_{A, I, B}"] \arrow[rd, "\id_A \otimes \lambda_B"']
+                        &
+                        & (A \otimes I) \otimes B \arrow[ld, "\rho_A \otimes \id_B"] \\
+                        & A \otimes B \rlap{,}
+                \end{tikzcd}
+            \end{equation*}
+            \begin{equation*}
+                \begin{tikzcd}[row sep=large, column sep=small]
+                        & A \otimes (B \otimes (C \otimes D)) \arrow[ld, "\id_A \otimes \alpha_{B, C, D}"'] \arrow[rd, "\alpha_{A, B, C \otimes D}"]& \\
+                    A \otimes ((B \otimes C) \otimes D) \arrow[d, "\alpha_{A, B \otimes C, D}"']
+                        & 
+                        & (A \otimes B) \otimes (C \otimes D) \arrow[d, "\alpha_{A \otimes B, C, D}"] \\
+                        (A \otimes (B \otimes C)) \otimes D \arrow[rr, "\alpha_{A, B, C} \otimes \id_D"']
+                        & 
+                        & ((A \otimes B) \otimes C) \otimes D \rlap{.}
+                \end{tikzcd}
+            \end{equation*}
+            このとき$I$を\textbf{単位対象} (\textit{unit object})，$\otimes$を\textbf{テンソル積} (\textit{tensor product}) と呼ぶ．
+            また$\Vcal$を6つ組$(\Vcal, \otimes, I, \alpha, \lambda, \rho)$として明記する場合もある．
+        % \item A monoidal category $\Vcal$ is \textit{symmetric} if $A \otimes B \cong B \otimes A$ holds by the following natural isomorphism $\sigma$
+        %     such that $\sigma_{B, A} \circ \sigma_{A, B} = \id_{A \otimes B}$ for all objects $A, B \in \Vcal$.
+        % \item A monoidal category is said to be \textit{strict} if Diagrams (\ref{equation:diagram_monoidal_isomorphisms}) are commutative.
+        % \item A monoidal category $\Vcal$ is \textit{closed} if for each $A \in \Vcal$, the functor $A \otimes - \colon \Vcal \to \Vcal$ has a right adjoint, written as $A \multimap - \colon \Vcal \to \Vcal$.
+        \item $(\Vcal, \otimes, I, \alpha, \lambda, \rho)$をモノイダル圏とする．$\Vcal$の\textbf{モノイド対象} (\textit{monoid object}) ないし単に\textbf{モノイド}とは，
+            対象$M \in \Vcal$，\textbf{乗法} (\textit{multiplication}) と呼ばれる射$\mu \colon M \otimes M \to M$，\textbf{単位} (\textit{unit}) と呼ばれる射$\eta \colon I \to M$から成る
+            3つ組$(M, \mu, \eta)$であって，以下の図式を可換にするもののことである．
+            \begin{equation}
+                \label{equation:monoid}
+                \begin{tikzcd}[sep=large]
+                    M \otimes M \otimes M \arrow[r, "\mu \otimes \id_M"] \arrow[d, "\id_M \otimes \mu"'] & M \otimes M \arrow[d, "\mu"] \\
+                    M \otimes M \arrow[r, "\mu"'] & M\rlap{,}
+                \end{tikzcd}
+                \qquad
+                \begin{tikzcd}[sep=large]
+                    I \otimes M \arrow[r, "\eta \otimes \id_M"] \arrow[rd, bend right, "\lambda_M"' name=X]
+                        & M \otimes M \arrow[d, "\mu"] 
+                        & \arrow[l, "\id_M \otimes \eta"'] M \otimes I \arrow[ld, bend left, "\rho_M" name=Y] \\
+                        & M\rlap{.}
+                \end{tikzcd}
+            \end{equation}
+        \item  \textbf{モナド} (\textit{monad}) とは，自己関手の圏におけるモノイド対象である．
+    \end{enumerate}
+\end{dfn}
+
+特にモナドについて補足しよう．
+所与の圏$\Ccal$に対して，関手圏$[\Ccal, \Ccal]$---以後は$\End_\Ccal$と書く---は，テンソル積として関手の合成$\circ$，単位対象として恒等関手$\id_\Ccal$を取ることでモノイダル圏をなす．
+以下の図式を見れば分かる通り，定義\ref{dfn:monoidal_category} (1) における自然変換$\alpha, \lambda, \rho$はすべて恒等自然変換となる．
+\begin{equation*}
+    % \begin{tikzcd}[sep=large]
+    %     \End_\Ccal \times \End_\Ccal \times \End_\Ccal  \arrow[r, "\otimes \times \id_{\End_\Ccal}"] \arrow[d, "\id_{\End_\Ccal} \times \otimes"'] & \End_\Ccal \times \End_\Ccal \arrow[d, "\otimes"] \\
+    %     \End_\Ccal \arrow[ur, Rightarrow, shorten=7mm, "\alpha" sloped]\times \End_\Ccal \arrow[r, "\otimes"'] & \End_\Ccal\rlap{,}
+    % \end{tikzcd}
+    \begin{tikzcd}[sep=large]
+        (F, G, H) \arrow[r, mapsto, "\circ \times \id_{\End_\Ccal}"] \arrow[d, mapsto, "\id_{\End_\Ccal} \times \circ"'] & (F \circ G, H) \arrow[d, mapsto, "\circ"] \\
+        (F, G \circ H) \arrow[r, mapsto, "\circ"', end anchor={[yshift=-2.9pt]}] & |[yshift=8pt]| \genfrac{}{}{0pt}{0}{(F \circ G) \circ H}{F \circ (G \circ H)\rlap{,}}
+    \end{tikzcd}
+    \qquad
+    % \begin{tikzcd}[sep=large]
+    %     \onebf \times \End_\Ccal \arrow[r, "\id_\Ccal \times \id_{\End_\Ccal}"] \arrow[rd, bend right, "\pi_2"' name=X]
+    %                     & \End_\Ccal \times \End_\Ccal \arrow[d, "\circ"] \arrow[Rightarrow, from=X, shorten=5mm, "\lambda" sloped]
+    %                     & \arrow[l, "\id_{\End_\Ccal} \times \id_\Ccal"'] \End_\Ccal \times \onebf \arrow[ld, bend left, "\pi_1" name=Y]  \arrow[Rightarrow, from=Y, to=1-2, shorten=5mm, "\rho" sloped] \\
+    %                     & \End_\Ccal\rlap{.}
+    % \end{tikzcd}
+    \begin{tikzcd}[sep=large]
+        (*, F) \arrow[r, mapsto, "\id_\Ccal \times \id_{\End_\Ccal}"] \arrow[rd, mapsto, bend right, "\pi_2"' name=X]
+                        & (\id_\Ccal, F) \mid (G, \id_\Ccal) \arrow[d, mapsto, "\circ"] %\arrow[Rightarrow, from=X, shorten=5mm, "\lambda" sloped]
+                        & \arrow[l, mapsto, "\id_{\End_\Ccal} \times \id_\Ccal"'] (G, *) \arrow[ld, mapsto, bend left, "\pi_1" name=Y] \\ % \arrow[Rightarrow, from=Y, to=1-2, shorten=5mm, "\rho" sloped] \\
+                        & \genfrac{}{}{0pt}{0}{\id_\Ccal \circ F \mid G \circ \id_\Ccal}{F \mid G\rlap{.}}
+    \end{tikzcd}
+\end{equation*}
+このとき$\End_\Ccal$の対象（すなわち関手）$T \colon \Ccal \to \Ccal$と
+射（すなわち自然変換）$\mu \colon T \circ T \Rightarrow T$および$\eta \colon \id_\Ccal \Rightarrow T$
+の組$(T, \mu, \eta)$は，以下の条件を満たすとき$\End_\Ccal$のモノイド対象となる．
+\begin{align*}
+    \mu \cdot (T\mu) &= \mu \cdot (\mu T), \\
+    \mu \cdot (T\eta) &= \mu \cdot (\eta T) = \id_T.
+\end{align*}
+これはまさに，図式 \ref{equation:monoid} と同じことを言っているに過ぎない．
+\begin{equation*}
+    \begin{tikzcd}[sep=large]
+        T \circ T \circ T \arrow[r, "\mu \circ \id_T"] \arrow[d, "\id_T \circ \mu"'] & T \circ T \arrow[d, "\mu"] \\
+        T \circ T \arrow[r, "\mu"'] & T\rlap{,}
+    \end{tikzcd}
+    \qquad
+    \begin{tikzcd}[sep=large]
+        \id_\Ccal \circ T \arrow[r, "\eta \circ \id_T"] \arrow[rd, bend right, "\lambda_T"' name=X]
+                        & T \circ T \arrow[d, "\mu"] 
+                        & \arrow[l, "\id_T \circ \eta"'] T \circ \id_\Ccal \arrow[ld, bend left, "\rho_T" name=Y] \\
+                        & T\rlap{.}
+    \end{tikzcd}
+\end{equation*}
+ただしここで次のような記法を用いはじめた．
+まず$\cdot$は$\End_\Ccal$における射の合成である．
+また$T \mu$は各対象$A \in \Ccal$について
+\begin{equation*}
+    (T \mu)_A = T(\mu_A) \colon T \circ T \circ T(A) \to T \circ T(A)
+\end{equation*}
+とすることで定義される自然変換$T \circ T \circ T \Rightarrow T \circ T$を表す．
+同様に $\mu T \colon T \circ T \circ T \Rightarrow T \circ T$で$(\mu T)_A = \mu_{T(A)}$により定まる自然変換を表す.
+この$(T, \mu, \eta)$が$\Ccal$におけるモナドである．
+
+\section{Haskellにおけるモナド}
+
+ようやく本題に入ろう．関数型プログラミング言語は数多あるが，本稿ではHaskellを用いて説明を行う．
+Haskellの型を対象，関数を射と見て，その全体を$\Hask$と書くことにする．実は$\Hask$は圏である．
+
+\begin{remarks}
+\end{remarks}
+
+\end{document}

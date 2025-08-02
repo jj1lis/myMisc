@@ -1,0 +1,236 @@
+\usepackage{amsmath,amsfonts,amssymb,amsthm,bm,ascmac}
+\usepackage{physics}
+\usepackage{tikz}
+\usepackage{gnuplot-lua-tikz,circuitikz}
+\usetikzlibrary{intersections,calc,arrows.meta,cd,automata,positioning,shapes.geometric}
+\usepackage{here,siunitx,multicol,multirow,systeme}
+\usepackage[version=3]{mhchem}
+\usepackage{chemfig,url,braket,enumerate,mathrsfs,otf,ulem,stmaryrd,titlesec}
+\usepackage{listings}
+\usepackage{bussproofs}
+\usepackage{mathtools}
+\usepackage{cite}
+\usepackage{docmute}
+% \lstset{
+%     language={C++}, 
+%     % backgroundcolor={\color[gray]{.85}},
+%     basicstyle={\footnotesize\ttfamily},
+%     identifierstyle={\footnotesize\ttfamily},
+%     commentstyle={\footnotesize\ttfamily \color[rgb]{0.5,0.5,0.5}},
+%     keywordstyle={\footnotesize\ttfamily \color[rgb]{0,0,0}},
+%     ndkeywordstyle={\footnotesize\ttfamily},
+%     stringstyle={\footnotesize\ttfamily}, 
+%     frame={tb}, 
+%     breaklines=true, 
+%     columns=[l]{fullflexible},
+%     numbers=left,
+%     %numbers=none, 
+%     xrightmargin=0zw,
+%     xleftmargin=3zw, 
+%     numberstyle={\scriptsize},
+%     stepnumber=1, 
+%     numbersep=1zw,
+%     escapechar={\^},
+%     morecomment=[l]{//}
+% } 
+\lstset{
+    language={Haskell}, %プログラミング言語によって変える。
+    basicstyle={\ttfamily\small},
+    %% breaklines=true, %折り返し
+}
+\lstset{
+    basicstyle={\ttfamily},
+    identifierstyle={\small},
+    commentstyle={\smallitshape},
+    keywordstyle={\color{blue}\small\bfseries},
+    commentstyle={\color{gray}\small},
+    stringstyle={\color{red}\small},
+    tabsize=2,
+    frame={tb},
+    breaklines=true,
+    columns=[l]{fullflexible},
+    numbers=left,
+    xrightmargin=0zw,
+    xleftmargin=3zw,
+    numberstyle={\scriptsize},
+    stepnumber=1,
+    numbersep=1zw,
+    lineskip=-0.5ex
+}
+\usepackage[dvipdfmx]{hyperref}
+\usepackage{pxjahyper}
+\hypersetup{%
+ setpagesize=false,%
+ bookmarks=true,%
+ bookmarksdepth=tocdepth,%
+ bookmarksnumbered=true,%
+ colorlinks=true,%
+ pdftitle={},%
+ pdfsubject={},%
+ pdfauthor={},%
+ pdfkeywords={}}
+
+\renewcommand{\labelenumi}{(\arabic{enumi})}
+\DeclareMathOperator{\Sinarc}{\mathrm{Sin}^{-1}}
+\DeclareMathOperator{\Cosarc}{\mathrm{Cos}^{-1}}
+\DeclareMathOperator{\Tanarc}{\mathrm{Tan}^{-1}}
+\DeclareMathOperator{\Real}{\mathbb{R}}
+\DeclareMathOperator{\Complex}{\mathbb{C}}
+\DeclareMathOperator{\Rational}{\mathbb{Q}}
+\DeclareMathOperator{\Natural}{{\mathbb{N}}}
+\DeclareMathOperator{\Integer}{\mathbb{Z}}
+\DeclareMathOperator{\Ker}{\mathrm{Ker}}
+\DeclareMathOperator{\diffset}{\backslash}
+\DeclareMathOperator{\define}{\overset{\text{def}}{\Longleftrightarrow}}
+\newcommand{\typed}{\!:\!}
+\newcommand{\Var} {\mathord{\mathbf{Var}}}
+\newcommand{\TVar}{\mathord{\mathbf{TVar}}}
+\newcommand{\Type}{\mathord{\mathbf{Type}}}
+\newcommand{\Term}{\mathord{\mathbf{\Lambda}}}
+\newcommand{\Asn}{\mathord{\mathbf{Asn}}}
+\newcommand{\Cont}{\mathord{\mathbf{Cont}}}
+\newcommand{\Church}{\mathord{\mathbf{M}}}
+\newcommand{\Sub}  {\mathord{\mathrm{Sub}}}
+\newcommand{\FV}  {\mathord{\mathrm{FV}}}
+\newcommand{\BV}  {\mathord{\mathrm{BV}}}
+\newcommand{\vars}{\mathcal{V}}
+\newcommand{\tvars}{\mathbb{V}}
+\newcommand{\terms}{\mathcal{T}}
+\newcommand{\types}{\mathbb{T}}
+\newcommand{\contexts}{\mathfrak{G}}
+\newcommand{\ID}  {\mathrm{ID}}
+\newcommand{\WEAK}{\mathrm{WEAK}}
+\newcommand{\EXC}{\mathrm{EXC}}
+\newcommand{\VAR} {\mathrm{VAR}}
+\newcommand{\APP} {\mathrm{APP}}
+\newcommand{\BND} {\mathrm{BND}}
+\newcommand{\INST}{\mathrm{INST}}
+\newcommand{\GEN} {\mathrm{GEN}}
+\newcommand{\tbeta}{\to_\beta}
+\newcommand{\ttbeta}{\twoheadrightarrow_\beta}
+\newcommand{\Typ}{\mathord{\mathrm{Typ}}}
+\newcommand{\SN}{\mathsf{SN}}
+\newcommand{\SAT}{\mathsf{SAT}}
+\newcommand{\Bool}{{\mathbb{B}}}
+\newcommand{\TCP}{\mathbf{TCP}}
+\newcommand{\TYP}{\mathbf{TYP}}
+\newcommand{\TI}{\mathrm{TI}}
+\newcommand{\Inferencer}{\mathcal{I}^\TYP}
+\newcommand{\SUP}{\mathbf{SUP}}
+\newcommand{\Ltt}{\mathord{\mathtt{L}}}
+\newcommand{\Rtt}{\mathord{\mathtt{R}}}
+\newcommand{\Stt}{\mathord{\mathtt{S}}}
+\newcommand{\Ktt}{\mathord{\mathtt{K}}}
+\newcommand{\Itt}{\mathord{\mathtt{I}}}
+% \newcommand{\init}{\mathrm{init}}
+\newcommand{\init}{0}
+\newcommand{\acc}{\mathrm{acc}}
+\newcommand{\rej}{\mathrm{rej}}
+\newcommand{\bak}{\mathrm{bak}}
+\newcommand{\textspace}{\text{\textvisiblespace}\,}
+\newcommand{\halts}{\!\downarrow}
+\newcommand{\stalls}{\!\uparrow}
+\newcommand{\pcto}{\rightharpoonup}
+\newcommand{\problems}{\mathcal{P}_\Sigma}
+\newcommand{\classified}{\in}
+\newcommand{\Halt}{\mathtt{Halt}}
+\newcommand{\Mcal}{\mathcal{M}}
+\newcommand{\Ncal}{\mathcal{N}}
+\newcommand{\id}{\mathrm{id}}
+\newcommand{\Id}{\mathrm{Id}}
+\newcommand{\Godel}{G\"{o}del{} }
+\newcommand{\godel}{{\mathfrak{g}}}
+\newcommand{\NJ}{\mathbf{NJ}}
+\newcommand{\Ccal}{{\mathcal{C}}}
+\newcommand{\Dcal}{{\mathcal{D}}}
+\newcommand{\Fcal}{{\mathcal{F}}}
+\newcommand{\Pcal}{{\mathcal{P}}}
+\newcommand{\Ucal}{{\mathcal{U}}}
+\newcommand{\Vcal}{{\mathcal{V}}}
+\newcommand{\Wcal}{{\mathcal{W}}}
+\newcommand{\Xbb}{{\mathbb{X}}}
+\newcommand{\Ybb}{{\mathbb{Y}}}
+\newcommand{\GCat}{{\mathcal G}}
+\newcommand{\CSet}{{\mathord{\mathbf{Set}}}}
+\newcommand{\End}{{\mathord{\mathbf{End}}}}
+\newcommand{\Cat}{{\mathord{\mathbf{Cat}}}}
+\newcommand{\CAT}{{\mathord{\mathbf{CAT}}}}
+\newcommand{\Par}{{\mathord{\mathbf{Par}}}}
+\newcommand{\Ibf}{{\mathord{\mathbf{I}}}}
+\newcommand{\onebf}{{\mathord{\mathbf{1}}}}
+\newcommand{\DP}{{\mathbf{DP}}}
+\newcommand{\PP}{{\mathrm{P}}}
+\newcommand{\NP}{{\mathrm{NP}}}
+\newcommand{\Rone}{\mathbf{R1}}
+\newcommand{\Rtwo}{\mathbf{R2}}
+\newcommand{\Rthree}{\mathbf{R3}}
+\newcommand{\Rfour}{\mathbf{R4}}
+\newcommand{\Tot}{\mathsf{Tot}}
+\newcommand{\Ocal}{\mathcal{O}}
+\newcommand{\Kscr}{\mathscr{K}}
+\newcommand{\Kcal}{\mathcal{K}}
+\newcommand{\opposite}{\mathrm{op}}
+\newcommand{\retract}{\mathrel{\triangleleft}}
+\newcommand{\defined}{\mathord{\downarrow}}
+\newcommand{\bindot}{\mathbin{\cdot}}
+\newcommand{\Hask}{\mathsf{Hask}}
+
+\DeclarePairedDelimiter{\interpret}{\llbracket}{\rrbracket}
+\DeclarePairedDelimiter{\encode}{\langle}{\rangle}
+\DeclarePairedDelimiter{\pair}{\lbrack}{\rbrack}
+\DeclareMathOperator{\Hom}{\mathrm{Hom}}
+\DeclareMathOperator{\ob}{\mathrm{ob}}
+\DeclareMathOperator{\dom}{\mathrm{dom}}
+\DeclareMathOperator{\cod}{\mathrm{cod}}
+\DeclareMathOperator{\src}{\mathrm{src}}
+\DeclareMathOperator{\tgt}{\mathrm{tgt}}
+\DeclareMathOperator*{\plim}{plim}
+
+\numberwithin{equation}{section}
+
+\newcounter{general}
+
+\newcommand{\gsection}[1]{\section{#1}\setcounter{general}{1}}
+
+\theoremstyle{definition}
+\newtheorem{dfnn}{定義}
+\newtheorem{axiomn}{Axiom}
+\newtheorem{thmn}{定理}
+\newtheorem{propn}{命題}
+\newtheorem{probn}{問題}
+\newtheorem{lemn}{補題}
+\newtheorem{corn}{系}
+\newtheorem{examplen}{例}
+\newtheorem{questionn}{問題}
+\newtheorem{cautionn}{注意}
+\newtheorem{remarksn}{注意}
+\newtheorem{notationn}{記法}
+\newtheorem{conjecturen}{予想}
+\renewcommand{\thedfnn}{\arabic{general}}
+\renewcommand{\theaxiomn}{\arabic{general}}
+\renewcommand{\thethmn}{\arabic{general}}
+\renewcommand{\thepropn}{\arabic{general}}
+\renewcommand{\theprobn}{\arabic{general}}
+\renewcommand{\thelemn}{\arabic{general}}
+\renewcommand{\thecorn}{\arabic{general}}
+\renewcommand{\theexamplen}{\arabic{general}}
+\renewcommand{\thequestionn}{\arabic{general}}
+\renewcommand{\thecautionn}{\arabic{general}}
+\renewcommand{\theremarksn}{\arabic{general}}
+\renewcommand{\thenotationn}{\arabic{general}}
+\renewcommand{\theconjecturen}{\arabic{general}}
+
+% \newenvironment{dfn}[1][]{\vspace{2ex}\begin{shadebox}\vspace{2ex}\begin{dfnn}[#1]}{\end{dfnn}\stepcounter{general}\vspace{2ex}\end{shadebox}\vspace{2ex}}
+\newenvironment{dfn}[1][]{\begin{dfnn}[#1]}{\end{dfnn}\stepcounter{general}}
+\newenvironment{axiom}[1][]{\begin{axiomn}[#1]}{\end{axiomn}\stepcounter{general}}
+\newenvironment{thm}[1][]{\begin{thmn}[#1]}{\end{thmn}\stepcounter{general}}
+\newenvironment{prop}[1][]{\begin{propn}[#1]}{\end{propn}\stepcounter{general}}
+\newenvironment{prob}[1][]{\begin{probn}[#1]}{\end{propn}\stepcounter{general}}
+\newenvironment{lem}[1][]{\begin{lemn}[#1]}{\end{lemn}\stepcounter{general}}
+\newenvironment{cor}[1][]{\begin{corn}[#1]}{\end{corn}\stepcounter{general}}
+\newenvironment{example}[1][]{\begin{examplen}[#1]}{\end{examplen}\stepcounter{general}}
+\newenvironment{question}[1][]{\begin{questionn}[#1]}{\end{questionn}\stepcounter{general}}
+\newenvironment{caution}[1][]{\begin{cautionn}[#1]}{\end{cautionn}\stepcounter{general}}
+\newenvironment{remarks}[1][]{\begin{remarksn}[#1]}{\end{remarksn}\stepcounter{general}}
+\newenvironment{notation}[1][]{\begin{notationn}[#1]}{\end{notationn}\stepcounter{general}}
+\newenvironment{conjecture}[1][]{\begin{conjecturen}[#1]}{\end{conjecturen}\stepcounter{general}}
